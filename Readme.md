@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Dmitriy Sokolov](https://up.htmlacademy.ru/univer-js1/1/user/2226861).
-* Наставник: `Неизвестно`.
+* Наставник: [Кирилл Чистяков](https://htmlacademy.ru/profile/id149394).
 
 ---
 
