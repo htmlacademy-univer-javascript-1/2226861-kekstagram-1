@@ -62,12 +62,7 @@ function randomComment() {
 }
 
 function randomComments(size) {
-  const comments = [];
-
-  for (let i = 0; i < size; i++) {
-    comments.push(randomComment());
-  }
-  return comments;
+  return Array.from({length: size}, (_) => randomComment());
 }
 
 function randomPhotosDescriptions(size) {
