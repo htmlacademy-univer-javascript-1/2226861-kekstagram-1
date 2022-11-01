@@ -1,5 +1,3 @@
 /* eslint-disable no-unused-vars */
 
-import {generateRandomPhotosDescriptions} from './data.js';
-
-generateRandomPhotosDescriptions();
+import './pictures.js';

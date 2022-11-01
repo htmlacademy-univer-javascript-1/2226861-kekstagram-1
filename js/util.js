@@ -24,13 +24,13 @@ shuffle array
 author: https://stackoverflow.com/a/2450976/12737587
  */
 function shuffle(array) {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length, randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex !== 0) {
 
     // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
+    randomIndex = randomInt(0, currentIndex);
     currentIndex--;
 
     // And swap it with the current element.
@@ -41,8 +41,4 @@ function shuffle(array) {
   return array;
 }
 
-function shuffledIndicesArray(size) {
-  return shuffle(Array(size).fill().map((_, i) => i));
-}
-
-export { isStringNoLonger, randomInt, randomElement, shuffle, shuffledIndicesArray };
+export { isStringNoLonger, randomInt, randomElement, shuffle };
