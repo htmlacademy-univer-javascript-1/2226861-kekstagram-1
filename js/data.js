@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import {randomElement, randomInt, shuffledIndicesArray} from './util.js';
+import {randomElement, randomInt} from './util.js';
 
 const DESCRIPTIONS = [
   'Фотография была сделана на мой телефон',
@@ -71,21 +71,13 @@ function randomComments(size) {
 }
 
 function randomPhotosDescriptions(size) {
-  const pd = [];
-
-  const descriptionIds = shuffledIndicesArray(size);
-  const urlNums = shuffledIndicesArray(size);
-
-  for (let i = 0; i < size; i++) {
-    pd.push({
-      id: descriptionIds[i],
-      url: `photos/${urlNums[i]}.jpg`,
-      description: randomDescription(),
-      likes: randomInt(15, 200),
-      comments: randomComments(randomInt(0, 4))
-    });
-  }
-  return pd;
+  return Array.from({length: size}, (_, i) => ({
+    id: i + 1,
+    url: `photos/${i + 1}.jpg`,
+    description: randomDescription(),
+    likes: randomInt(15, 200),
+    comments: randomComments(randomInt(0, 4))
+  }));
 }
 
 const generateRandomPhotosDescriptions = () => randomPhotosDescriptions(25);
