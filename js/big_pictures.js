@@ -1,44 +1,41 @@
 /* eslint-disable no-unused-vars */
 
-function openPicture(picture) {
-  const bigPicture = document.querySelector('.big-picture');
-  bigPicture.classList.remove('hidden');
+const bigPicture = document.querySelector('.big-picture')
 
+const img = bigPicture.querySelector('.big-picture__img').querySelector('img');
+const likes = bigPicture.querySelector('.likes-count');
+
+const commentTemplate = document.querySelector('#comment').content.querySelector('.social__comment');
+const commentsContainer = bigPicture.querySelector('.social__comments');
+const commentsCount = bigPicture.querySelector('.comments-count');
+const caption = bigPicture.querySelector('.social__caption');
+
+const commentCounter = bigPicture.querySelector('.social__comment-count');
+const commentsLoader = bigPicture.querySelector('.comments-loader');
+
+const pictureCloseButton = bigPicture.querySelector('#picture-cancel');
+
+pictureCloseButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+
+  document.body.classList.remove('.modal-open');
+  bigPicture.classList.add('hidden');
+});
+
+function openPicture(picture) {
+  bigPicture.classList.remove('hidden');
   document.body.classList.add('.modal-open');
 
-  const img = bigPicture.querySelector('.big-picture__img').querySelector('img');
-  const likes = bigPicture.querySelector('.likes-count');
-
-  const commentTemplate = document.querySelector('#comment').content.querySelector('.social__comment');
-  const commentsContainer = bigPicture.querySelector('.social__comments');
-  const commentsCount = bigPicture.querySelector('.comments-count');
-  const caption = bigPicture.querySelector('.social__caption');
-
-  const commentCounter = bigPicture.querySelector('.social__comment-count');
-  const commentsLoader = bigPicture.querySelector('.comments-loader');
-
-  const pictureCloseButton = bigPicture.querySelector('#picture-cancel');
-
-  pictureCloseButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-
-    document.body.classList.remove('.modal-open');
-    bigPicture.classList.add('hidden');
-  });
-
-  const onEscClickEvent = (evt) => {
+  document.addEventListener('keydown', (evt) => {
     evt.preventDefault();
 
     if (evt.key === 'Escape') {
       document.body.classList.remove('.modal-open');
       bigPicture.classList.add('hidden');
-
-      document.removeEventListener('keydown', onEscClickEvent);
     }
-  };
+  }, {once: true});
 
-  document.addEventListener('keydown', onEscClickEvent);
-
+  // temporary mock
   commentCounter.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 

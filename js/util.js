@@ -1,9 +1,5 @@
 /* eslint-disable no-unused-vars */
 
-function isStringNoLonger(string, maxLength) {
-  return string.length <= maxLength;
-}
-
 function randomInt(fromInclusive, toInclusive) {
   if (fromInclusive > toInclusive) {
     [fromInclusive, toInclusive] = [toInclusive, fromInclusive];
@@ -41,4 +37,8 @@ function shuffle(array) {
   return array;
 }
 
-export { isStringNoLonger, randomInt, randomElement, shuffle };
+function areAllCaseInsensitiveStringsUnique(strings) {
+  return new Set(strings.map((hs) => hs.toLowerCase())).size === strings.length;
+}
+
+export { randomInt, randomElement, shuffle, areAllCaseInsensitiveStringsUnique };
