@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-const bigPicture = document.querySelector('.big-picture')
+const bigPicture = document.querySelector('.big-picture');
 
 const img = bigPicture.querySelector('.big-picture__img').querySelector('img');
 const likes = bigPicture.querySelector('.likes-count');
