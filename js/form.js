@@ -2,6 +2,10 @@
 
 import { areAllCaseInsensitiveStringsUnique } from './util.js';
 
+const maxHashtagContentLength = 19;
+const maxHashtagsCount = 5;
+const maxCommentLength = 140;
+
 const fileUploader = document.querySelector('#upload-file');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const formCloseButton = imgUploadForm.querySelector('#upload-cancel');
@@ -19,14 +23,11 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'img-upload-form--eror'
 });
 
-const maxHashtagContentLength = 19;
-const maxHashtagsCount = 5;
-const maxCommentLength = 140;
 
 function validateHashCodes(str) {
   if (str === '') { return true; }
 
-  const hashtagRegex = new RegExp(`#[A-Za-z0-9]{1,${maxHashtagContentLength}}`);
+  const hashtagRegex = new RegExp(`^#[A-Za-z0-9]{1,${maxHashtagContentLength}}$`);
   const hashtags = str.trim().split(new RegExp('[\\s\\t]+'));
 
   if (hashtags.length > maxHashtagsCount) {
@@ -66,27 +67,28 @@ function resetUploadedImage() {
   fileUploader.value = null;
 }
 
+const onPanelCloseActions = [];
+
+function onCloseForm() {
+  document.body.classList.remove('.modal-open');
+  imgUploadOverlay.classList.add('hidden');
+
+  resetUploadedImage();
+  pristine.reset();
+
+  onPanelCloseActions.forEach((action) => action());
+  onPanelCloseActions.length = 0;
+}
+
 const onEscEvt = (evt) => {
   if (evt.key === 'Escape') {
     if (evt.target !== hashtagsField && evt.target !== commentField) {
       evt.preventDefault();
-      document.removeEventListener('keydown', onEscEvt);
-      document.body.classList.remove('.modal-open');
-      imgUploadOverlay.classList.add('hidden');
-      resetUploadedImage();
       imgUploadForm.reset();
-      pristine.reset();
+      onCloseForm();
     }
   }
 };
-
-formCloseButton.addEventListener('click', () => {
-  document.body.classList.remove('.modal-open');
-  imgUploadOverlay.classList.add('hidden');
-  document.removeEventListener('keydown', onEscEvt);
-  resetUploadedImage();
-  pristine.reset();
-});
 
 
 fileUploader.addEventListener('change', () => {
@@ -103,7 +105,16 @@ fileUploader.addEventListener('change', () => {
 
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
+
   document.addEventListener('keydown', onEscEvt);
+  onPanelCloseActions.push(() => {
+    document.removeEventListener('keydown', onEscEvt);
+  });
+
+  formCloseButton.addEventListener('click', onCloseForm);
+  onPanelCloseActions.push(() => {
+    formCloseButton.addEventListener('click', onCloseForm);
+  });
 });
 
 
@@ -115,6 +126,6 @@ imgUploadForm.addEventListener('submit', (evt) => {
     return;
   }
 
-  document.removeEventListener('keydown', onEscEvt);
-  pristine.reset();
+  onPanelCloseActions.forEach((action) => action());
+  onPanelCloseActions.length = 0;
 });
