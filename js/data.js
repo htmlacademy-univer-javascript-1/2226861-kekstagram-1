@@ -71,7 +71,7 @@ function randomPhotosDescriptions(size) {
     url: `photos/${i + 1}.jpg`,
     description: randomDescription(),
     likes: randomInt(15, 200),
-    comments: randomComments(randomInt(0, 4))
+    comments: randomComments(randomInt(0, 13))
   }));
 }
 

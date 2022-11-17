@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import {generateRandomPhotosDescriptions} from './data.js';
-import {openPicture} from './big_pictures.js';
+import {openPicture} from './big-pictures.js';
 
 const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const similarListFragment = document.createDocumentFragment();
