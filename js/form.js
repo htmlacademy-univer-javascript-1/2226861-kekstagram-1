@@ -31,7 +31,7 @@ const pristine = new Pristine(imgUploadForm, {
 });
 
 
-function validateHashCodes(str) {
+const validateHashCodes = (str) => {
   if (str === '') { return true; }
 
   const hashtagRegex = new RegExp(`^#[A-Za-z0-9]{1,${maxHashtagContentLength}}$`);
@@ -52,31 +52,25 @@ function validateHashCodes(str) {
   }
 
   return true;
-}
+};
 
-function validateComment(comment) {
-  return comment.length <= maxCommentLength;
-}
+const validateComment = (comment) => comment.length <= maxCommentLength;
 
-function getErrorHashtagsMessage() {
-  return `Неверный формат ввода хэштегов! Допускаются уникальные (регистр не учитывается) хэшкоды, не более ${maxHashtagsCount} шт., с максимальной длиной ${maxHashtagContentLength}, начинающихся с '#' и разделяющиеся пробелами`;
-}
+const getErrorHashtagsMessage = () => `Неверный формат ввода хэштегов! Допускаются уникальные (регистр не учитывается) хэшкоды, не более ${maxHashtagsCount} шт., с максимальной длиной ${maxHashtagContentLength}, начинающихся с '#' и разделяющиеся пробелами`;
 
-function getErrorCommentMessage() {
-  return `Длина комментария не может превышать ${maxCommentLength} символов!`;
-}
+const getErrorCommentMessage = () => `Длина комментария не может превышать ${maxCommentLength} символов!`;
 
 pristine.addValidator(hashtagsField, validateHashCodes, getErrorHashtagsMessage);
 pristine.addValidator(commentField, validateComment, getErrorCommentMessage);
 
-function resetUploadedImage() {
+const resetUploadedImage = () => {
   imgUploadPreview.src = '';
   fileUploader.value = null;
-}
+};
 
 const onPanelCloseActions = [];
 
-function onCloseForm() {
+const onCloseForm = () => {
   document.body.classList.remove('modal-open');
   imgUploadOverlay.classList.add('hidden');
 
@@ -85,7 +79,7 @@ function onCloseForm() {
 
   onPanelCloseActions.forEach((action) => action());
   onPanelCloseActions.length = 0;
-}
+};
 
 const onEscEvt = (evt) => {
   if (evt.key === 'Escape') {
