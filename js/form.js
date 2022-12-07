@@ -6,6 +6,10 @@ const maxHashtagContentLength = 19;
 const maxHashtagsCount = 5;
 const maxCommentLength = 140;
 
+const pictureScaleIncrementValue = 25;
+const maxPictureScaleValue = 100;
+const minPictureScaleValue = 25;
+
 const fileUploader = document.querySelector('#upload-file');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const formCloseButton = imgUploadForm.querySelector('#upload-cancel');
@@ -13,6 +17,9 @@ const imgUploadPreview = document.querySelector('.img-upload__preview').querySel
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const hashtagsField = imgUploadForm.querySelector('.text__hashtags');
 const commentField = imgUploadForm.querySelector('.text__description');
+const pictureScaleDownButton = imgUploadForm.querySelector('.scale__control--smaller');
+const pictureScaleUpButton = imgUploadForm.querySelector('.scale__control--bigger');
+const pictureScaleValue = imgUploadForm.querySelector('.scale__control--value');
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -70,7 +77,7 @@ function resetUploadedImage() {
 const onPanelCloseActions = [];
 
 function onCloseForm() {
-  document.body.classList.remove('.modal-open');
+  document.body.classList.remove('modal-open');
   imgUploadOverlay.classList.add('hidden');
 
   resetUploadedImage();
@@ -90,6 +97,29 @@ const onEscEvt = (evt) => {
   }
 };
 
+const getPictureCurrentScaleValue = () => parseInt(pictureScaleValue.value, 10);
+
+const setPictureScaleValue = (value) => {
+  pictureScaleValue.value = `${value}%`;
+  const transformCssValue = `scale(${value / 100.0})`;
+  imgUploadPreview.style.transform = transformCssValue;
+  imgUploadPreview.style['-webkit-transform'] = transformCssValue;
+  imgUploadPreview.style['-ms-transform'] = transformCssValue;
+};
+
+const onPictureScaleUp = () => {
+  const currentScale = getPictureCurrentScaleValue();
+  if (currentScale <= maxPictureScaleValue - pictureScaleIncrementValue) {
+    setPictureScaleValue(currentScale + pictureScaleIncrementValue);
+  }
+};
+
+const onPictureScaleDown = () => {
+  const currentScale = getPictureCurrentScaleValue();
+  if (currentScale >= minPictureScaleValue + pictureScaleIncrementValue) {
+    setPictureScaleValue(currentScale - pictureScaleIncrementValue);
+  }
+};
 
 fileUploader.addEventListener('change', () => {
 
@@ -113,7 +143,17 @@ fileUploader.addEventListener('change', () => {
 
   formCloseButton.addEventListener('click', onCloseForm);
   onPanelCloseActions.push(() => {
-    formCloseButton.addEventListener('click', onCloseForm);
+    formCloseButton.removeEventListener('click', onCloseForm);
+  });
+
+  pictureScaleUpButton.addEventListener('click', onPictureScaleUp);
+  onPanelCloseActions.push(() => {
+    pictureScaleUpButton.removeEventListener('click', onPictureScaleUp);
+  });
+
+  pictureScaleDownButton.addEventListener('click', onPictureScaleDown);
+  onPanelCloseActions.push(() => {
+    pictureScaleDownButton.removeEventListener('click', onPictureScaleDown);
   });
 });
 
