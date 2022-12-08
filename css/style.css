@@ -357,9 +357,9 @@ main {
   -webkit-filter: drop-shadow(0 0 10px #622104);
           filter: drop-shadow(0 0 10px #622104);
 
-  -webkit-transform: scale(1.1);
-      -ms-transform: scale(1.1);
-          transform: scale(1.1);
+  -webkit-transform: scale(1.0);
+      -ms-transform: scale(1.0);
+          transform: scale(1.0);
 }
 
 .img-upload__input:focus + .img-upload__label {

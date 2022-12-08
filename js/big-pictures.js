@@ -22,14 +22,14 @@ let displayedCommentsCount;
 
 const onPanelCloseActions = [];
 
-function onClosePanel() {
+const onClosePanel = () => {
   document.body.classList.remove('.modal-open');
   bigPicture.classList.add('hidden');
   commentsLoader.classList.remove('hidden');
 
   onPanelCloseActions.forEach((action) => action());
   onPanelCloseActions.length = 0;
-}
+};
 
 const onEscClickEvent = (evt) => {
   if (evt.key === 'Escape') {
@@ -39,11 +39,11 @@ const onEscClickEvent = (evt) => {
   }
 };
 
-const onWindowCloseClickEvent = (evt) => {
+const onWindowCloseClickEvent = () => {
   onClosePanel();
 };
 
-function displayComments(count, picture) {
+const displayComments = (count, picture) => {
   const similarCommentsFragment = document.createDocumentFragment();
 
   const from = displayedCommentsCount;
@@ -68,9 +68,9 @@ function displayComments(count, picture) {
   if (picture.comments.length === displayedCommentsCount) {
     commentsLoader.classList.add('hidden');
   }
-}
+};
 
-function openPicture(picture) {
+const openPicture = (picture) => {
   bigPicture.classList.remove('hidden');
   document.body.classList.add('.modal-open');
 
@@ -103,6 +103,6 @@ function openPicture(picture) {
 
   displayedCommentsCount = 0;
   moreCommentsLoad();
-}
+};
 
 export {openPicture};

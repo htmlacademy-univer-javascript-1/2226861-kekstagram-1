@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-function randomInt(fromInclusive, toInclusive) {
+const randomInt = (fromInclusive, toInclusive) => {
   if (fromInclusive > toInclusive) {
     [fromInclusive, toInclusive] = [toInclusive, fromInclusive];
   }
@@ -9,17 +9,15 @@ function randomInt(fromInclusive, toInclusive) {
   const max = Math.floor(toInclusive);
 
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
 
-function randomElement(array) {
-  return array[randomInt(0, array.length - 1)];
-}
+const randomElement = (array) => array[randomInt(0, array.length - 1)];
 
 /*
 shuffle array
 author: https://stackoverflow.com/a/2450976/12737587
  */
-function shuffle(array) {
+const shuffle = (array) => {
   let currentIndex = array.length, randomIndex;
 
   // While there remain elements to shuffle.
@@ -35,10 +33,32 @@ function shuffle(array) {
   }
 
   return array;
-}
+};
 
-function areAllCaseInsensitiveStringsUnique(strings) {
-  return new Set(strings.map((hs) => hs.toLowerCase())).size === strings.length;
-}
+const removeClass = (element, filter) => {
+  for (let i = element.classList.length - 1; i >= 0; i--) {
+    const className = element.classList[i];
+    if (filter(className)) {
+      element.classList.remove(className);
+      return;
+    }
+  }
+};
 
-export { randomInt, randomElement, shuffle, areAllCaseInsensitiveStringsUnique };
+const findCheckedRadioButton = (radios) => {
+  for (const radio of radios) {
+    if (radio.checked) { return radio; }
+  }
+  return null;
+};
+
+const areAllCaseInsensitiveStringsUnique = (strings) => new Set(strings.map((hs) => hs.toLowerCase())).size === strings.length;
+
+export {
+  randomInt,
+  randomElement,
+  shuffle,
+  areAllCaseInsensitiveStringsUnique,
+  removeClass,
+  findCheckedRadioButton
+};

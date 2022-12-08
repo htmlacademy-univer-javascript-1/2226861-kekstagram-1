@@ -48,32 +48,24 @@ const randomCommentMessage = () => randomElement(COMMENTS);
 
 const randomName = () => `${randomElement(FIRSTNAMES)} ${randomElement(SURNAMES)}`;
 
-function randomCommentId() {
-  return randomInt(0, 10000000);
-}
+const randomCommentId = () => randomInt(0, 10000000);
 
-function randomComment() {
-  return {
-    id: randomCommentId(),
-    avatar: `img/avatar-${randomInt(1, 6)}.svg`,
-    message: randomCommentMessage(),
-    name: randomName()
-  };
-}
+const randomComment = () => ({
+  id: randomCommentId(),
+  avatar: `img/avatar-${randomInt(1, 6)}.svg`,
+  message: randomCommentMessage(),
+  name: randomName()
+});
 
-function randomComments(size) {
-  return Array.from({length: size}, (_) => randomComment());
-}
+const randomComments = (size) => Array.from({length: size}, (_) => randomComment());
 
-function randomPhotosDescriptions(size) {
-  return Array.from({length: size}, (_, i) => ({
-    id: i + 1,
-    url: `photos/${i + 1}.jpg`,
-    description: randomDescription(),
-    likes: randomInt(15, 200),
-    comments: randomComments(randomInt(0, 13))
-  }));
-}
+const randomPhotosDescriptions = (size) => Array.from({length: size}, (_, i) => ({
+  id: i + 1,
+  url: `photos/${i + 1}.jpg`,
+  description: randomDescription(),
+  likes: randomInt(15, 200),
+  comments: randomComments(randomInt(0, 13))
+}));
 
 const generateRandomPhotosDescriptions = () => randomPhotosDescriptions(25);
 
