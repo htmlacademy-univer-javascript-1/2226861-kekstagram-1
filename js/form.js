@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-
-import { areAllCaseInsensitiveStringsUnique } from './util.js';
+import { areAllCaseInsensitiveStringsUnique, removeClass, findCheckedRadioButton } from './util.js';
 
 const maxHashtagContentLength = 19;
 const maxHashtagsCount = 5;
@@ -9,6 +8,54 @@ const maxCommentLength = 140;
 const pictureScaleIncrementValue = 25;
 const maxPictureScaleValue = 100;
 const minPictureScaleValue = 25;
+
+const filterMinValues = new Map([
+  ['chrome', 0],
+  ['sepia', 0],
+  ['marvin', 0],
+  ['phobos', 0],
+  ['heat', 1]
+]);
+
+const filterMaxValues = new Map([
+  ['chrome', 1],
+  ['sepia', 1],
+  ['marvin', 100],
+  ['phobos', 3],
+  ['heat', 3]
+]);
+
+const filterDefaultValues = new Map([
+  ['chrome', 1],
+  ['sepia', 1],
+  ['marvin', 100],
+  ['phobos', 3],
+  ['heat', 3]
+]);
+
+const filterSteps = new Map([
+  ['chrome', 0.1],
+  ['sepia', 0.1],
+  ['marvin', 1],
+  ['phobos', 0.1],
+  ['heat', 0.1]
+]);
+
+const filterUnitSuffixes = new Map([
+  ['chrome', ''],
+  ['sepia', ''],
+  ['marvin', '%'],
+  ['phobos', 'px'],
+  ['heat', '']
+]);
+
+const filterStyleNames = new Map([
+  ['chrome', 'grayscale'],
+  ['sepia', 'sepia'],
+  ['marvin', 'invert'],
+  ['phobos', 'blur'],
+  ['heat', 'brightness']
+]);
 
 const fileUploader = document.querySelector('#upload-file');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -20,6 +67,9 @@ const commentField = imgUploadForm.querySelector('.text__description');
 const pictureScaleDownButton = imgUploadForm.querySelector('.scale__control--smaller');
 const pictureScaleUpButton = imgUploadForm.querySelector('.scale__control--bigger');
 const pictureScaleValue = imgUploadForm.querySelector('.scale__control--value');
+const effectRadios = imgUploadForm.querySelectorAll('.effects__radio');
+const pictureEffectValue = imgUploadForm.querySelector('.effect-level__value');
+const pictureEffectSlider = imgUploadForm.querySelector('.effect-level__slider');
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -115,6 +165,30 @@ const onPictureScaleDown = () => {
   }
 };
 
+const onEffectSelect = (evt) => {
+  const selectedStyle = evt.currentTarget.value;
+  removeClass(imgUploadPreview, (className) => className.startsWith('effects__preview--'));
+
+  if (selectedStyle !== 'none') {
+    imgUploadPreview.classList.add(`effects__preview--${selectedStyle}`);
+
+    pictureEffectSlider.noUiSlider.updateOptions({
+      range: {
+        min: filterMinValues.get(selectedStyle),
+        max: filterMaxValues.get(selectedStyle)
+      },
+      step: filterSteps.get(selectedStyle),
+      start: filterDefaultValues.get(selectedStyle),
+      connect: 'lower',
+    });
+    pictureEffectSlider.classList.remove('hidden');
+
+  } else {
+    imgUploadPreview.style.filter = '';
+    pictureEffectSlider.classList.add('hidden');
+  }
+};
+
 fileUploader.addEventListener('change', () => {
 
   const imgFile = fileUploader.files[0];
@@ -149,6 +223,11 @@ fileUploader.addEventListener('change', () => {
   onPanelCloseActions.push(() => {
     pictureScaleDownButton.removeEventListener('click', onPictureScaleDown);
   });
+
+  effectRadios.forEach((effectRadio) => effectRadio.addEventListener('click', onEffectSelect));
+  onPanelCloseActions.push(() => {
+    effectRadios.forEach((effectRadio) => effectRadio.removeEventListener('click', onEffectSelect));
+  });
 });
 
 
@@ -162,4 +241,21 @@ imgUploadForm.addEventListener('submit', (evt) => {
 
   onPanelCloseActions.forEach((action) => action());
   onPanelCloseActions.length = 0;
+});
+
+pictureEffectSlider.classList.add('hidden');
+noUiSlider.create(pictureEffectSlider, {
+  range: {
+    min: 0,
+    max: 0,
+  },
+  start: 0,
+});
+
+pictureEffectSlider.noUiSlider.on('update', () => {
+  pictureEffectValue.value = pictureEffectSlider.noUiSlider.get();
+
+  const effect = findCheckedRadioButton(effectRadios).value;
+
+  imgUploadPreview.style.filter = `${filterStyleNames.get(effect)}(${pictureEffectValue.value}${filterUnitSuffixes.get(effect)})`;
 });

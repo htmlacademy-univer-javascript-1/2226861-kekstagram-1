@@ -35,6 +35,30 @@ const shuffle = (array) => {
   return array;
 };
 
+const removeClass = (element, filter) => {
+  for (let i = element.classList.length - 1; i >= 0; i--) {
+    const className = element.classList[i];
+    if (filter(className)) {
+      element.classList.remove(className);
+      return;
+    }
+  }
+};
+
+const findCheckedRadioButton = (radios) => {
+  for (const radio of radios) {
+    if (radio.checked) { return radio; }
+  }
+  return null;
+};
+
 const areAllCaseInsensitiveStringsUnique = (strings) => new Set(strings.map((hs) => hs.toLowerCase())).size === strings.length;
 
-export { randomInt, randomElement, shuffle, areAllCaseInsensitiveStringsUnique };
+export {
+  randomInt,
+  randomElement,
+  shuffle,
+  areAllCaseInsensitiveStringsUnique,
+  removeClass,
+  findCheckedRadioButton
+};
