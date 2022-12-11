@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 
-const serverUrl = 'https://26.javascript.pages.academy/kekstagram/data';
+const baseServerUrl = 'https://26.javascript.pages.academy/kekstagram';
 
 const loadUserImages = (onPicturesLoaded, onError) => {
-  fetch(serverUrl)
+  fetch(`${baseServerUrl}/data`)
     .then((response) => {
       if (response.ok) {
         return response.json();
