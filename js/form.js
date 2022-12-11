@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { areAllCaseInsensitiveStringsUnique, removeClass, findCheckedRadioButton } from './util.js';
+import {sendPictureForm} from './api.js';
 
 const maxHashtagContentLength = 19;
 const maxHashtagsCount = 5;
@@ -60,6 +61,7 @@ const filterStyleNames = new Map([
 const fileUploader = document.querySelector('#upload-file');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const formCloseButton = imgUploadForm.querySelector('#upload-cancel');
+const formUploadSubmit = imgUploadForm.querySelector('#upload-submit');
 const imgUploadPreview = document.querySelector('.img-upload__preview').querySelector('img');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const hashtagsField = imgUploadForm.querySelector('.text__hashtags');
@@ -70,6 +72,8 @@ const pictureScaleValue = imgUploadForm.querySelector('.scale__control--value');
 const effectRadios = imgUploadForm.querySelectorAll('.effects__radio');
 const pictureEffectValue = imgUploadForm.querySelector('.effect-level__value');
 const pictureEffectSlider = imgUploadForm.querySelector('.effect-level__slider');
+const formSuccessMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+const formFailureMessageTemplate = document.querySelector('#error').content.querySelector('.error');
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -113,6 +117,34 @@ const getErrorCommentMessage = () => `Длина комментария не м�
 pristine.addValidator(hashtagsField, validateHashCodes, getErrorHashtagsMessage);
 pristine.addValidator(commentField, validateComment, getErrorCommentMessage);
 
+const onEffectSelected = (selectedStyle) => {
+  removeClass(imgUploadPreview, (className) => className.startsWith('effects__preview--'));
+
+  if (selectedStyle !== 'none') {
+    imgUploadPreview.classList.add(`effects__preview--${selectedStyle}`);
+
+    pictureEffectSlider.noUiSlider.updateOptions({
+      range: {
+        min: filterMinValues.get(selectedStyle),
+        max: filterMaxValues.get(selectedStyle)
+      },
+      step: filterSteps.get(selectedStyle),
+      start: filterDefaultValues.get(selectedStyle),
+      connect: 'lower',
+    });
+    pictureEffectSlider.classList.remove('hidden');
+
+  } else {
+    imgUploadPreview.style.filter = '';
+    pictureEffectSlider.classList.add('hidden');
+  }
+};
+
+const onEffectSelect = (evt) => {
+  const selectedStyle = evt.currentTarget.value;
+  onEffectSelected(selectedStyle);
+};
+
 const resetUploadedImage = () => {
   imgUploadPreview.src = '';
   fileUploader.value = null;
@@ -120,12 +152,16 @@ const resetUploadedImage = () => {
 
 const onPanelCloseActions = [];
 
-const onCloseForm = () => {
+const onCloseForm = (reset = true) => {
   document.body.classList.remove('modal-open');
   imgUploadOverlay.classList.add('hidden');
-
   resetUploadedImage();
-  pristine.reset();
+
+  if (reset) {
+    imgUploadForm.reset();
+    onEffectSelected('none');
+    pristine.reset();
+  }
 
   onPanelCloseActions.forEach((action) => action());
   onPanelCloseActions.length = 0;
@@ -135,8 +171,7 @@ const onEscEvt = (evt) => {
   if (evt.key === 'Escape') {
     if (evt.target !== hashtagsField && evt.target !== commentField) {
       evt.preventDefault();
-      imgUploadForm.reset();
-      onCloseForm();
+      onCloseForm(true);
     }
   }
 };
@@ -162,30 +197,6 @@ const onPictureScaleDown = () => {
   const currentScale = getPictureCurrentScaleValue();
   if (currentScale >= minPictureScaleValue + pictureScaleIncrementValue) {
     setPictureScaleValue(currentScale - pictureScaleIncrementValue);
-  }
-};
-
-const onEffectSelect = (evt) => {
-  const selectedStyle = evt.currentTarget.value;
-  removeClass(imgUploadPreview, (className) => className.startsWith('effects__preview--'));
-
-  if (selectedStyle !== 'none') {
-    imgUploadPreview.classList.add(`effects__preview--${selectedStyle}`);
-
-    pictureEffectSlider.noUiSlider.updateOptions({
-      range: {
-        min: filterMinValues.get(selectedStyle),
-        max: filterMaxValues.get(selectedStyle)
-      },
-      step: filterSteps.get(selectedStyle),
-      start: filterDefaultValues.get(selectedStyle),
-      connect: 'lower',
-    });
-    pictureEffectSlider.classList.remove('hidden');
-
-  } else {
-    imgUploadPreview.style.filter = '';
-    pictureEffectSlider.classList.add('hidden');
   }
 };
 
@@ -231,16 +242,110 @@ fileUploader.addEventListener('change', () => {
 });
 
 
-imgUploadForm.addEventListener('submit', (evt) => {
-  const validForm = pristine.validate();
+const showSuccessOnFormUpload = () => {
+  const successElement = formSuccessMessageTemplate.cloneNode(true);
+  const innerDiv = successElement.querySelector('.success__inner');
 
+  const closeButton = successElement.querySelector('.success__button');
+
+  const removeListenerActions = new Array(3);
+
+  const closeOnButtonClick = () => {
+    removeListenerActions.forEach((action) => action());
+    document.body.removeChild(successElement);
+  };
+
+  const closeOnEscClick = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      removeListenerActions.forEach((action) => action());
+      document.body.removeChild(successElement);
+    }
+  };
+
+  const closeOnOutsideClick = (evt) => {
+    if (evt.target.closest('.success__inner') !== innerDiv) {
+      removeListenerActions.forEach((action) => action());
+      document.body.removeChild(successElement);
+    }
+  };
+
+  removeListenerActions[0] = () => { closeButton.removeEventListener('click', closeOnButtonClick); };
+  removeListenerActions[1] = () => { document.removeEventListener('click', closeOnOutsideClick); };
+  removeListenerActions[2] = () => { document.removeEventListener('keydown', closeOnEscClick); };
+
+  closeButton.addEventListener('click', closeOnButtonClick);
+  document.addEventListener('click', closeOnOutsideClick);
+  document.addEventListener('keydown', closeOnEscClick);
+
+  document.body.appendChild(successElement);
+};
+
+const showFailureOnFormUpload = () => {
+  const failureElement = formFailureMessageTemplate.cloneNode(true);
+  const innerDiv = failureElement.querySelector('.error__inner');
+  const closeButton = failureElement.querySelector('.error__button');
+
+  const removeListenerActions = new Array(3);
+
+  const closeOnButtonClick = () => {
+    removeListenerActions.forEach((action) => action());
+    document.body.removeChild(failureElement);
+  };
+
+  const closeOnEscClick = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      removeListenerActions.forEach((action) => action());
+      document.body.removeChild(failureElement);
+    }
+  };
+
+  const closeOnOutsideClick = (evt) => {
+    if (evt.target.closest('.error__inner') !== innerDiv) {
+      removeListenerActions.forEach((action) => action());
+      document.body.removeChild(failureElement);
+    }
+  };
+
+  removeListenerActions[0] = () => { closeButton.removeEventListener('click', closeOnButtonClick); };
+  removeListenerActions[1] = () => { document.removeEventListener('click', closeOnOutsideClick); };
+  removeListenerActions[2] = () => { document.removeEventListener('keydown', closeOnEscClick); };
+
+  closeButton.addEventListener('click', closeOnButtonClick);
+  document.addEventListener('click', closeOnOutsideClick);
+  document.addEventListener('keydown', closeOnEscClick);
+
+  document.body.appendChild(failureElement);
+};
+
+imgUploadForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const validForm = pristine.validate();
   if (!validForm) {
-    evt.preventDefault();
     return;
   }
 
-  onPanelCloseActions.forEach((action) => action());
-  onPanelCloseActions.length = 0;
+  formUploadSubmit.disabled = true;
+
+  sendPictureForm(
+    imgUploadForm,
+    () => {
+      /* on success */
+      onCloseForm(true);
+
+      showSuccessOnFormUpload();
+      formUploadSubmit.disabled = false;
+    },
+    () => {
+      /* on error */
+      onCloseForm(false);
+
+      showFailureOnFormUpload();
+      formUploadSubmit.disabled = false;
+    }
+  );
+
 });
 
 pictureEffectSlider.classList.add('hidden');

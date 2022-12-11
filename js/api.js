@@ -20,6 +20,33 @@ const loadUserImages = (onPicturesLoaded, onError) => {
     });
 };
 
+const makeFormData = (data) => new FormData(data);
+
+const sendPictureForm = (form, onSuccess, onError) => {
+  fetch(
+    baseServerUrl,
+    {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: makeFormData(form),
+    },
+  )
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      throw new Error(`Error on picture form send: ${response.status} ${response.statusText}`);
+    })
+    .then((data) => {
+      onSuccess(data);
+    })
+    .catch((err) => {
+      onError(err);
+    });
+};
+
 export {
-  loadUserImages
+  loadUserImages,
+  sendPictureForm
 };
