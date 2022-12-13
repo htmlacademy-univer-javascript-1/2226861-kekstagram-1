@@ -2,13 +2,13 @@
 import { areAllCaseInsensitiveStringsUnique, removeClass, findCheckedRadioButton } from './util.js';
 import {sendPictureForm} from './api.js';
 
-const maxHashtagContentLength = 19;
-const maxHashtagsCount = 5;
-const maxCommentLength = 140;
+const MAX_HASHTAG_CONTENT_LENGTH = 19;
+const MAX_HASHTAGS_COUNT = 5;
+const MAX_COMMENT_LENGTH = 140;
 
-const pictureScaleIncrementValue = 25;
-const maxPictureScaleValue = 100;
-const minPictureScaleValue = 25;
+const PICTURE_SCALE_INCREMENT_VALUE = 25;
+const MAX_PICTURE_SCALE_VALUE = 100;
+const MIN_PICTURE_SCALE_VALUE = 25;
 
 const filterMinValues = new Map([
   ['chrome', 0],
@@ -88,10 +88,10 @@ const pristine = new Pristine(imgUploadForm, {
 const validateHashCodes = (str) => {
   if (str === '') { return true; }
 
-  const hashtagRegex = new RegExp(`^#[A-Za-z0-9]{1,${maxHashtagContentLength}}$`);
+  const hashtagRegex = new RegExp(`^#[A-Za-z0-9]{1,${MAX_HASHTAG_CONTENT_LENGTH}}$`);
   const hashtags = str.trim().split(new RegExp('[\\s\\t]+'));
 
-  if (hashtags.length > maxHashtagsCount) {
+  if (hashtags.length > MAX_HASHTAGS_COUNT) {
     return false;
   }
 
@@ -108,11 +108,11 @@ const validateHashCodes = (str) => {
   return true;
 };
 
-const validateComment = (comment) => comment.length <= maxCommentLength;
+const validateComment = (comment) => comment.length <= MAX_COMMENT_LENGTH;
 
-const getErrorHashtagsMessage = () => `Неверный формат ввода хэштегов! Допускаются уникальные (регистр не учитывается) хэшкоды, не более ${maxHashtagsCount} шт., с максимальной длиной ${maxHashtagContentLength}, начинающихся с '#' и разделяющиеся пробелами`;
+const getErrorHashtagsMessage = () => `Неверный формат ввода хэштегов! Допускаются уникальные (регистр не учитывается) хэшкоды, не более ${MAX_HASHTAGS_COUNT} шт., с максимальной длиной ${MAX_HASHTAG_CONTENT_LENGTH}, начинающихся с '#' и разделяющиеся пробелами`;
 
-const getErrorCommentMessage = () => `Длина комментария не может превышать ${maxCommentLength} символов!`;
+const getErrorCommentMessage = () => `Длина комментария не может превышать ${MAX_COMMENT_LENGTH} символов!`;
 
 pristine.addValidator(hashtagsField, validateHashCodes, getErrorHashtagsMessage);
 pristine.addValidator(commentField, validateComment, getErrorCommentMessage);
@@ -188,15 +188,15 @@ const setPictureScaleValue = (value) => {
 
 const onPictureScaleUp = () => {
   const currentScale = getPictureCurrentScaleValue();
-  if (currentScale <= maxPictureScaleValue - pictureScaleIncrementValue) {
-    setPictureScaleValue(currentScale + pictureScaleIncrementValue);
+  if (currentScale <= MAX_PICTURE_SCALE_VALUE - PICTURE_SCALE_INCREMENT_VALUE) {
+    setPictureScaleValue(currentScale + PICTURE_SCALE_INCREMENT_VALUE);
   }
 };
 
 const onPictureScaleDown = () => {
   const currentScale = getPictureCurrentScaleValue();
-  if (currentScale >= minPictureScaleValue + pictureScaleIncrementValue) {
-    setPictureScaleValue(currentScale - pictureScaleIncrementValue);
+  if (currentScale >= MIN_PICTURE_SCALE_VALUE + PICTURE_SCALE_INCREMENT_VALUE) {
+    setPictureScaleValue(currentScale - PICTURE_SCALE_INCREMENT_VALUE);
   }
 };
 

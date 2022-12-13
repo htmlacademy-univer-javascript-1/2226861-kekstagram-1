@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 
-const baseServerUrl = 'https://26.javascript.pages.academy/kekstagram';
+const BASE_SERVER_URL = 'https://26.javascript.pages.academy/kekstagram';
 
 const loadUserImages = (onPicturesLoaded, onError) => {
-  fetch(`${baseServerUrl}/data`)
+  fetch(`${BASE_SERVER_URL}/data`)
     .then((response) => {
       if (response.ok) {
         return response.json();
@@ -24,7 +24,7 @@ const makeFormData = (data) => new FormData(data);
 
 const sendPictureForm = (form, onSuccess, onError) => {
   fetch(
-    baseServerUrl,
+    BASE_SERVER_URL,
     {
       method: 'POST',
       credentials: 'same-origin',

@@ -3,15 +3,15 @@
 import {shuffle} from './util.js';
 
 
-const activeFilterClass = 'img-filters__button--active';
-const randomPhotosCount = 10;
+const ACTIVE_FILTER_CLASS = 'img-filters__button--active';
+const RANDOM_PHOTOS_COUNT = 10;
 
 const filterDefaultElement = document.querySelector('#filter-default');
 const filterRandomElement = document.querySelector('#filter-random');
 const filterDiscussedElement = document.querySelector('#filter-discussed');
 
 let currentFilter = filterDefaultElement;
-currentFilter.classList.add(activeFilterClass);
+currentFilter.classList.add(ACTIVE_FILTER_CLASS);
 
 let onFilterChanged = null;
 
@@ -20,9 +20,9 @@ const setOnFilterChangedAction = (action) => {
 };
 
 const updateFilter = (newFilter) => {
-  currentFilter.classList.remove(activeFilterClass);
+  currentFilter.classList.remove(ACTIVE_FILTER_CLASS);
   currentFilter = newFilter;
-  newFilter.classList.add(activeFilterClass);
+  newFilter.classList.add(ACTIVE_FILTER_CLASS);
 };
 
 
@@ -37,7 +37,7 @@ const onFilterClick = (evt) => {
 };
 
 const filterDefault = (photos) => photos;
-const filterRandom = (photos) => shuffle(photos.slice(0, randomPhotosCount));
+const filterRandom = (photos) => shuffle(photos.slice(0, RANDOM_PHOTOS_COUNT));
 const filterDiscussed = (photos) => photos.slice().sort((first, second) => second.comments.length - first.comments.length);
 
 const filterPhotos = (photos) => {
