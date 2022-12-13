@@ -3,13 +3,24 @@
 import {openPicture} from './big-pictures.js';
 import {loadUserImages} from './api.js';
 import {showError} from './error.js';
+import {filterPhotos, setOnFilterChangedAction} from './filter.js';
 
-const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+const pictureClass = 'picture';
+const photoTemplate = document.querySelector('#picture').content.querySelector(`.${pictureClass}`);
 const similarListFragment = document.createDocumentFragment();
 const picturesContainer = document.querySelector('.pictures');
+const imgFilters = document.querySelector('.img-filters');
 
 
 const displayPhotos = (photos) => {
+  // remove old pictures
+  for (let i = picturesContainer.childElementCount - 1; i >= 0; i--) {
+    if (picturesContainer.children[i].classList.contains(pictureClass)) {
+      picturesContainer.removeChild(picturesContainer.children[i]);
+    }
+  }
+
   photos.forEach((photo) => {
     const photoElement = photoTemplate.cloneNode(true);
     photoElement.querySelector('.picture__img').src = photo.url;
@@ -25,5 +36,14 @@ const displayPhotos = (photos) => {
   picturesContainer.appendChild(similarListFragment);
 };
 
-loadUserImages(displayPhotos, showError);
+const onPhotosLoaded = (photos) => {
+  setOnFilterChangedAction(() => {
+    displayPhotos(filterPhotos(photos));
+  });
 
+  displayPhotos(filterPhotos(photos));
+  imgFilters.classList.remove('img-filters--inactive');
+};
+
+
+loadUserImages(onPhotosLoaded, showError);
