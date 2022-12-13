@@ -12,7 +12,6 @@ const commentsContainer = bigPicture.querySelector('.social__comments');
 const commentsCount = bigPicture.querySelector('.comments-count');
 const caption = bigPicture.querySelector('.social__caption');
 
-const commentCounter = bigPicture.querySelector('.social__comment-count');
 const displayedCommentsCounter = bigPicture.querySelector('.displayed__comments-count');
 const commentsLoader = bigPicture.querySelector('.comments-loader');
 

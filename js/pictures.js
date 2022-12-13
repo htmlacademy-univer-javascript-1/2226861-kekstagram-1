@@ -7,9 +7,9 @@ import {filterPhotos, setOnFilterChangedAction} from './filter.js';
 import {debounce} from './optimization.js';
 
 
-const rerenderDelay = 500;
-const pictureClass = 'picture';
-const photoTemplate = document.querySelector('#picture').content.querySelector(`.${pictureClass}`);
+const RERENDER_DELAY = 500;
+const PICTURE_CLASS = 'picture';
+const photoTemplate = document.querySelector('#picture').content.querySelector(`.${PICTURE_CLASS}`);
 const similarListFragment = document.createDocumentFragment();
 const picturesContainer = document.querySelector('.pictures');
 const imgFilters = document.querySelector('.img-filters');
@@ -18,7 +18,7 @@ const imgFilters = document.querySelector('.img-filters');
 const displayPhotos = (photos) => {
   // remove old pictures
   for (let i = picturesContainer.childElementCount - 1; i >= 0; i--) {
-    if (picturesContainer.children[i].classList.contains(pictureClass)) {
+    if (picturesContainer.children[i].classList.contains(PICTURE_CLASS)) {
       picturesContainer.removeChild(picturesContainer.children[i]);
     }
   }
@@ -41,7 +41,7 @@ const displayPhotos = (photos) => {
 const onPhotosLoaded = (photos) => {
   const displayPhotosDebounce = debounce(
     () => displayPhotos(filterPhotos(photos)),
-    rerenderDelay
+    RERENDER_DELAY
   );
 
   setOnFilterChangedAction(() => displayPhotosDebounce());

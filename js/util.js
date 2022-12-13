@@ -11,8 +11,6 @@ const randomInt = (fromInclusive, toInclusive) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const randomElement = (array) => array[randomInt(0, array.length - 1)];
-
 /*
 shuffle array
 author: https://stackoverflow.com/a/2450976/12737587
@@ -56,7 +54,6 @@ const areAllCaseInsensitiveStringsUnique = (strings) => new Set(strings.map((hs)
 
 export {
   randomInt,
-  randomElement,
   shuffle,
   areAllCaseInsensitiveStringsUnique,
   removeClass,
