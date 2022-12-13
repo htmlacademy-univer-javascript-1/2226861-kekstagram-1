@@ -4,8 +4,10 @@ import {openPicture} from './big-pictures.js';
 import {loadUserImages} from './api.js';
 import {showError} from './error.js';
 import {filterPhotos, setOnFilterChangedAction} from './filter.js';
+import {debounce} from './optimization.js';
 
 
+const rerenderDelay = 500;
 const pictureClass = 'picture';
 const photoTemplate = document.querySelector('#picture').content.querySelector(`.${pictureClass}`);
 const similarListFragment = document.createDocumentFragment();
@@ -37,11 +39,15 @@ const displayPhotos = (photos) => {
 };
 
 const onPhotosLoaded = (photos) => {
-  setOnFilterChangedAction(() => {
-    displayPhotos(filterPhotos(photos));
-  });
+  const displayPhotosDebounce = debounce(
+    () => displayPhotos(filterPhotos(photos)),
+    rerenderDelay
+  );
+
+  setOnFilterChangedAction(() => displayPhotosDebounce());
 
   displayPhotos(filterPhotos(photos));
+
   imgFilters.classList.remove('img-filters--inactive');
 };
 
