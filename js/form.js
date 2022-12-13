@@ -209,7 +209,6 @@ fileUploader.addEventListener('change', () => {
     return;
   }
 
-  // Mock for future homework
   imgUploadPreview.src = URL.createObjectURL(imgFile);
 
   imgUploadOverlay.classList.remove('hidden');
